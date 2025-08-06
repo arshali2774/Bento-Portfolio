@@ -1,103 +1,222 @@
+"use client";
+import ArrowTopRight1 from "@/components/icons/arrow";
+import {
+  anticipate,
+  circOut,
+  motion,
+} from "motion/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import {themes} from "@/utils/themes"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // Animation variants for the firework burst effect (delayed until item 9 completes both stages)
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 1.5, // Wait for item 9 to complete both scaling and positioning
+      },
+    },
+  };
+  // Special animation for Item 9 - Two-stage "dropping from screen" effect
+  const item9Variants = {
+    hidden: {
+      scale: 4, // Start huge (close to camera/screen)
+      opacity: 0,
+      x: "calc(50vw - 50% - 1050px)", // Centered horizontally
+      y: "calc(50vh - 50% - 300px)", // Centered vertically
+      filter: "blur(2px)", // Slight blur when it's "close to camera"
+    },
+    visible: {
+      scale: 1, // Scale down to normal, then stay normal
+      opacity: 1,
+      x: ["calc(50vw - 50% - 1050px)", "calc(50vw - 50% - 1050px)", 0], // Stay centered, then move to position
+      y: ["calc(50vh - 50% - 300px)", "calc(50vh - 50% - 300px)", 0], // Stay centered, then move to position
+      filter: ["blur(0px)", "blur(0px)"], // Remove blur
+      transition: {
+        duration: 2.2,
+        // times: [0, 1], // Smooth transition
+        ease: [circOut,anticipate],
+      },
+    },
+  };
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  // Calculate center offset for each item to create the burst effect
+  const createItemVariants = (finalX: number, finalY: number) => ({
+    hidden: {
+      x: `calc(50vw - 50% - ${finalX}px)`,
+      y: `calc(50vh - 50% - ${finalY}px)`,
+      scale: 1,
+      opacity: 0,
+    },
+    visible: {
+      x: 0,
+      y: 0,
+      scale: 1,
+      opacity: [0, 1, 1],
+      transition: {
+        duration: 0.5,
+        times: [0, 0.5, 1],
+        ease:circOut
+        // ease: cubicBezier(.47,.96,.33,.98),
+      },
+    },
+  });
+
+
+
+  const [theme, setTheme] = useState(themes[0]); // default fallback
+  useEffect(() => {
+    const lastIndex = parseInt(localStorage.getItem("themeIndex") || "0", 10);
+    const nextIndex = (lastIndex + 1) % themes.length;
+    setTheme(themes[lastIndex]);
+    localStorage.setItem("themeIndex", nextIndex.toString());
+  }, []);
+
+  if (!theme) return null; // Optional: show nothing during first render
+  return (
+    // Bento grid
+    <main className="h-screen bg-[var(--background)] text-[var(--text)] p-4 relative overflow-hidden" style={{
+      "--hover": theme.hover,
+      "--card": theme.card,
+      "--background": theme.background,
+      "--text":theme.text
+      // "--hover": theme.dark_mode.hover,
+      // "--card": theme.dark_mode.card,
+      // "--background": theme.dark_mode.background,
+      // "--text":theme.dark_mode.text
+    } as React.CSSProperties}
+  >
+      <motion.div
+        className="grid grid-cols-13 grid-rows-8 gap-4 w-full h-full"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div
+          variants={createItemVariants(0, 0)}
+          className="bg-[var(--card)] rounded-lg col-start-1 col-end-3  flex items-center justify-center"
+        >
+          <span className="text-center text-nowrap font-silkscreen leading-1 text-2xl">
+            Arsh Ali
+          </span>
+        </motion.div>
+        <motion.div
+          variants={createItemVariants(650, 0)}
+          className="bg-[var(--card)]  rounded-lg col-start-7 col-end-11 overflow-hidden"
+        >
+          <ul className="flex w-full items-center justify-evenly h-full font-overpass">
+            <li className="hover:bg-[var(--hover)] h-full w-full flex items-center justify-center cursor-pointer">
+              <span className="text-center text-nowrap text-lg">Home</span>
+            </li>
+            <li className="hover:bg-[var(--hover)] h-full w-full flex items-center justify-center cursor-pointer">
+              <span className="text-center text-nowrap text-lg">About me</span>
+            </li>
+            <li className="hover:bg-[var(--hover)] h-full w-full flex items-center justify-center cursor-pointer">
+              <span className="text-center text-nowrap text-lg">My work</span>
+            </li>
+          </ul>
+        </motion.div>
+        <motion.div
+          variants={createItemVariants(1150, 0)}
+          className="bg-[var(--card)]  p-2 rounded-lg col-start-11 col-end-14 flex items-center justify-center"
+        >
+          <span className="text-center text-nowrap font-overpass text-lg">
+            Wanna Hire Me?
+          </span>
+        </motion.div>
+
+        <motion.div
+          variants={createItemVariants(50, 50)}
+          className="bg-[var(--card)]  p-6 rounded-lg col-start-1 col-end-7 row-span-4 flex flex-col justify-between font-overpass"
+        >
+          <p className="text-xl"> What do I Like ?</p>
+          <h1 className="text-6xl">
+            <span className="font-lora">Crafting</span>
+            <br />
+            <span className="font-sofia">Visuals</span>
+            <br />
+            <span>Building</span>
+            <br />
+            <span className="font-limeLight">Experiences</span>
+            <br />
+          </h1>
+        </motion.div>
+        <motion.div
+          variants={createItemVariants(700, 100)}
+          className="bg-[var(--card)]  p-6 rounded-lg col-start-7 col-end-10 row-span-4 font-overpass flex flex-col justify-between"
+        >
+          <p className="font-lora text-xl">
+            From stunning posters and logos to dynamic websites. I bring
+            creativity and innovation together to design to bold brands,
+            engaging motion and seamless web experiences.
+          </p>
+          <h2 className="text-4xl">What do I do ?</h2>
+        </motion.div>
+        <motion.div
+          variants={createItemVariants(1050, 50)}
+          className="bg-[var(--card)]  p-6 rounded-lg col-start-10 col-end-14 row-span-2 font-overpass flex-col flex justify-between"
+        >
+          <p className="text-xl">Looking for me ?</p>
+          <h2 className="flex gap-4 text-4xl font-lora">
+            Contact Me <ArrowTopRight1 size="24" />
+          </h2>
+        </motion.div>
+        <motion.div
+          variants={createItemVariants(0, 500)}
+          className="bg-transparent  rounded-lg col-start-1 col-end-5 row-span-3"
         >
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src="/image-2.jpg" // Refers to public/images/banner.jpg
+            alt="Profile Image 2"
+            fill
+            className="object-cover rounded-lg"
+            priority
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        </motion.div>
+        <motion.div
+          variants={createItemVariants(450, 500)}
+          className="bg-[var(--card)]  p-6 rounded-lg col-start-5 col-end-10  row-span-3 flex flex-col justify-between"
+        >
+          <p className="text-xl">Wanna check out my works ?</p>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-4xl font-lora">Project 1</h2>
+              <span className="w-24 h-1 bg-[var(--text)]"></span>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-4xl font-lora">Project 2</h2>
+              <span className="w-24 h-1 bg-[var(--text)]"></span>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-4xl font-lora">Project 3</h2>
+              <span className="w-24 h-1 bg-[var(--text)]"></span>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-4xl font-lora">Project 4</h2>
+              <span className="w-24 h-1 bg-[var(--text)]"></span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Item 9 - Two-stage animation: scale down at center, pause, then move to position */}
+
+        <motion.div
+          variants={item9Variants}
+          initial="hidden"
+          animate="visible"
+          className="  rounded-lg col-start-10 col-end-14 row-span-5 row-start-4 relative"
         >
           <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+            src="/image-1.jpg" // Refers to public/images/banner.jpg
+            alt="Profile Image 1"
+            fill
+            className="object-cover rounded-lg"
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </motion.div>
+      </motion.div>
+    </main>
   );
 }

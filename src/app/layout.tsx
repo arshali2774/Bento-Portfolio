@@ -1,16 +1,35 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lora, Sofia, Silkscreen, Overpass, Limelight } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const lora = Lora({
+  subsets: ['latin'],
+  variable: '--font-lora',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const sofia = Sofia({
+  subsets: ['latin'],
+  weight: ['400'], // Sofia supports limited weights
+  variable: '--font-sofia',
 });
+
+const silkscreen = Silkscreen({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-silkscreen',
+});
+
+const overpass = Overpass({
+  subsets: ['latin'],
+  weight: ['400','500','600','700','800','900'], // choose available weights
+  variable: '--font-overpass',
+});
+
+const limelight = Limelight({
+  subsets: ['latin'],
+  weight:['400'],
+  variable: '--font-limelight',
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${lora.variable} ${sofia.variable} ${silkscreen.variable} ${overpass.variable} ${limelight.variable} antialiased`}
       >
         {children}
       </body>
