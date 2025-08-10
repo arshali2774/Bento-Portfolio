@@ -1,13 +1,17 @@
 "use client";
 import ArrowTopRight1 from "@/components/icons/arrow";
 import {
+  AnimatePresence,
   anticipate,
   circOut,
+  easeIn,
   motion,
 } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {themes} from "@/utils/themes"
+import { themes } from "@/utils/themes";
+import ContactCard from "@/components/ContactCard";
+import Shape from "@/components/Shape";
 
 export default function Home() {
   // Animation variants for the firework burst effect (delayed until item 9 completes both stages)
@@ -38,11 +42,23 @@ export default function Home() {
       transition: {
         duration: 2.2,
         // times: [0, 1], // Smooth transition
-        ease: [circOut,anticipate],
+        ease: [circOut, anticipate],
       },
     },
   };
-
+  // contact me grid variants
+  const contactGridVariants = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        ease: easeIn,
+      },
+    },
+  };
   // Calculate center offset for each item to create the burst effect
   const createItemVariants = (finalX: number, finalY: number) => ({
     hidden: {
@@ -59,36 +75,41 @@ export default function Home() {
       transition: {
         duration: 0.5,
         times: [0, 0.5, 1],
-        ease:circOut
+        ease: circOut,
         // ease: cubicBezier(.47,.96,.33,.98),
       },
     },
   });
-
-
-
+  //states
   const [theme, setTheme] = useState(themes[0]); // default fallback
+  const [contactClick, setContactClick] = useState(false);
+  const handleContactClick = () => {
+    setContactClick(true);
+  };
   useEffect(() => {
     const lastIndex = parseInt(localStorage.getItem("themeIndex") || "0", 10);
     const nextIndex = (lastIndex + 1) % themes.length;
     setTheme(themes[lastIndex]);
     localStorage.setItem("themeIndex", nextIndex.toString());
   }, []);
-
   if (!theme) return null; // Optional: show nothing during first render
   return (
     // Bento grid
-    <main className="h-screen bg-[var(--background)] text-[var(--text)] p-4 relative overflow-hidden" style={{
-      "--hover": theme.hover,
-      "--card": theme.card,
-      "--background": theme.background,
-      "--text":theme.text
-      // "--hover": theme.dark_mode.hover,
-      // "--card": theme.dark_mode.card,
-      // "--background": theme.dark_mode.background,
-      // "--text":theme.dark_mode.text
-    } as React.CSSProperties}
-  >
+    <main
+      className="h-screen bg-[var(--background)] text-[var(--text)] p-4 relative overflow-hidden"
+      style={
+        {
+          "--hover": theme.hover,
+          "--card": theme.card,
+          "--background": theme.background,
+          "--text": theme.text,
+          // "--hover": theme.dark_mode.hover,
+          // "--card": theme.dark_mode.card,
+          // "--background": theme.dark_mode.background,
+          // "--text":theme.dark_mode.text
+        } as React.CSSProperties
+      }
+    >
       <motion.div
         className="grid grid-cols-13 grid-rows-8 gap-4 w-full h-full"
         variants={containerVariants}
@@ -103,6 +124,9 @@ export default function Home() {
             Arsh Ali
           </span>
         </motion.div>
+        <div className="col-start-3 col-end-7">
+          <Shape />
+        </div>
         <motion.div
           variants={createItemVariants(650, 0)}
           className="bg-[var(--card)]  rounded-lg col-start-7 col-end-11 overflow-hidden"
@@ -155,24 +179,29 @@ export default function Home() {
           </p>
           <h2 className="text-4xl">What do I do ?</h2>
         </motion.div>
+
         <motion.div
           variants={createItemVariants(1050, 50)}
-          className="bg-[var(--card)]  p-6 rounded-lg col-start-10 col-end-14 row-span-2 font-overpass flex-col flex justify-between"
+          className="rounded-lg col-start-10 col-end-14 row-span-2 font-overpass flex flex-col justify-between relative"
         >
-          <p className="text-xl">Looking for me ?</p>
-          <h2 className="flex gap-4 text-4xl font-lora">
+          <ContactCard />
+          {/* <p className="text-xl">Looking for me?</p>
+          <button
+            className="flex gap-4 text-4xl font-lora cursor-pointer hover:bg-[var(--hover)] w-fit px-3 py-4 rounded-lg"
+            onClick={handleContactClick}
+          >
             Contact Me <ArrowTopRight1 size="24" />
-          </h2>
+          </button> */}
         </motion.div>
         <motion.div
           variants={createItemVariants(0, 500)}
-          className="bg-transparent  rounded-lg col-start-1 col-end-5 row-span-3"
+          className="bg-[var(--card)] rounded-lg col-start-1 col-end-5 row-span-3"
         >
           <Image
             src="/image-2.jpg" // Refers to public/images/banner.jpg
             alt="Profile Image 2"
             fill
-            className="object-cover rounded-lg"
+            className="object-cover rounded-lg mix-blend-luminosity "
             priority
           />
         </motion.div>
@@ -207,13 +236,13 @@ export default function Home() {
           variants={item9Variants}
           initial="hidden"
           animate="visible"
-          className="  rounded-lg col-start-10 col-end-14 row-span-5 row-start-4 relative"
+          className="bg-[var(--card)] rounded-lg col-start-10 col-end-14 row-span-5 row-start-4 relative"
         >
           <Image
             src="/image-1.jpg" // Refers to public/images/banner.jpg
             alt="Profile Image 1"
             fill
-            className="object-cover rounded-lg"
+            className="object-cover rounded-lg mix-blend-luminosity"
           />
         </motion.div>
       </motion.div>

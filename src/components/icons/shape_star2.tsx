@@ -1,0 +1,16 @@
+type StarFourPointsProps = {
+  size: string;
+};
+
+const StarFourPoints = ({ size }: StarFourPointsProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+  >
+    <path fill="currentColor" d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3l-3-8Z" />
+  </svg>
+);
+
+export default StarFourPoints;
