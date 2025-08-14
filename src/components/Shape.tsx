@@ -1,24 +1,33 @@
+"use client";
 import Asterisk16 from "./icons/shape_asterik";
 import Decagram from "./icons/shape_decagram";
 import StarFourPoints from "./icons/shape_star2";
 import { motion, steps } from "motion/react";
-
-import WaveLine2 from "./icons/wave_2";
-import WaveLine3 from "./icons/wave_3";
-// import { WaveLine1 } from "./icons/wave_1";
-import { SmoothWave } from "./icons/waves";
-import Wave1 from "./icons/wave_1";
+import AnimatedWave from "./icons/wave1";
+import MorphingShape from "./MorphingShape";
+import MorphShapeGSAP from "./MorphShapeGSAP";
+import { shape1, shape2, shape3 } from "@/utils/shapesArr";
 
 const Shape = () => {
   return (
-    <div className="flex gap-3 items-center justify-center w-full h-full text-[var(--card)] relative overflow-hidden">
+    <div className="flex items-center justify-center w-full h-full text-[var(--card)] relative overflow-hidden px-8">
       {/* Background Lines */}
-
-      {/* <motion.div className="absolute top-[20%] left-0 w-full h-fit -z-10">
-        <Wave1 height={10} />
+      <motion.div className="absolute top-[10%] left-0 w-full h-12  overflow-hidden">
+        <AnimatedWave />
       </motion.div>
+      {/* <motion.div className="absolute top-[2%] left-0 w-full h-12  overflow-hidden">
+        <AnimatedWave />
+      </motion.div> */}
 
-      <motion.div className="absolute top-[50%] left-0 w-[200%] -z-10">
+      <motion.div className="absolute bottom-[10%] left-0 w-full h-12  overflow-hidden">
+        <AnimatedWave />
+      </motion.div>
+      <MorphShapeGSAP shapes={shape1} />
+      <MorphShapeGSAP shapes={shape2} />
+      <MorphShapeGSAP shapes={shape3} />
+      {/* <MorphingShape rotationDirection="cw" /> */}
+
+      {/* <motion.div className="absolute top-[50%] left-0 w-[200%] -z-10">
         <WaveLine2 color="#7B61FF" />
       </motion.div>
 
@@ -26,7 +35,7 @@ const Shape = () => {
         <WaveLine3 color="#7B61FF" />
       </motion.div> */}
       {/* 1 — Smooth clockwise medium speed */}
-      <motion.div
+      {/* <motion.div
         initial={{ scale: 0, rotate: 0 }}
         animate={{ scale: 1, rotate: [0, 360] }}
         transition={{
@@ -35,10 +44,10 @@ const Shape = () => {
         }}
       >
         <Decagram size="50" />
-      </motion.div>
+      </motion.div> */}
 
       {/* 2 — Smooth counter-clockwise fast */}
-      <motion.div
+      {/* <motion.div
         initial={{ scale: 0, rotate: 0 }}
         animate={{ scale: 1, rotate: [0, -360] }}
         transition={{
@@ -47,10 +56,10 @@ const Shape = () => {
         }}
       >
         <Asterisk16 size="50" />
-      </motion.div>
+      </motion.div> */}
 
       {/* 3 — Stepped clockwise, slow */}
-      <motion.div
+      {/* <motion.div
         initial={{ scale: 0, rotate: 0 }}
         animate={{ scale: 1, rotate: [0, 360] }}
         transition={{
@@ -63,10 +72,10 @@ const Shape = () => {
         }}
       >
         <StarFourPoints size="50" />
-      </motion.div>
+      </motion.div> */}
 
       {/* 4 — Complex sequence: smooth CW fast → step CW → smooth CCW fast → step CCW */}
-      <motion.div
+      {/* <motion.div
         initial={{ scale: 0, rotate: 0 }}
         animate={{
           scale: 1,
@@ -97,7 +106,7 @@ const Shape = () => {
         }}
       >
         <Decagram size="50" />
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 };

@@ -111,7 +111,7 @@ export default function Home() {
       }
     >
       <motion.div
-        className="grid grid-cols-13 grid-rows-8 gap-4 w-full h-full"
+        className="grid grid-cols-13 grid-rows-8 gap-4 w-full h-full "
         variants={containerVariants}
         initial="hidden"
         animate="visible"

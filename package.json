@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "gsap": "^3.13.0",
     "motion": "^12.18.1",
     "next": "15.3.3",
     "react": "^19.0.0",
@@ -16,9 +17,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/flubber": "^0.4.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "flubber": "^0.4.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
